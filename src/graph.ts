@@ -21,15 +21,20 @@ export function buildAdjacency(edges: GraphEdge[]) : Map<string, string[]> {  //
 export function findRoutesFrom(start: string, adjacency: Map<string, string[]>): string[][]{  // returns ALL full routes that begin at "start"
     const routes: string[][] = [];
 
-    function walk(current: string, path: string[]): void {                                    // inner recursive function: "current" = where we are, "path" = how we got here
+    function walk(current: string, path: string[]): void {                                  // inner recursive function: "current" = where we are, "path" = how we got here
         const targets = adjacency.get(current);                                             // asks the map: where does the service I'm standing on go? (string[] or undefined)
         if (targets === undefined) {
             routes.push(path);                                                              // reached the end: put the full route we walked into the basket
         }
         else {
-            for (const next of targets) {                                                   // loops over every service that "current" calls
-                walk (next, [...path, next]);                                               // continue from "next", with the path so far + "next" at the end
-            }
+            for (const next of targets) {                                                    // loops over every service that "current" calls
+                if (!path.includes(next)){                                                   // "next" is NOT in the route yet - safe to continue (no cycle)
+                    walk (next, [...path, next]);                                            // continue from "next", with the path so far + "next" at the end
+                }
+                else {
+                    routes.push(path);                                                       // cycle detected: the route ends here - save it as it is (without "next")
+                }
+            }                                                    
         }
     }
 
