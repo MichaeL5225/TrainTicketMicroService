@@ -60,3 +60,14 @@ export function findEntryPoints(nodes: GraphNode[], edges: GraphEdge[]): string[
 
     return entryPoints;
 }
+
+
+export function findAllRoutes(entryPoints: string[], adjacency: Map<string, string[]>): string[][] {    // returns every full route in the graph, from every entry point
+    const allRoutes: string[][] = [];
+
+    for (const start of entryPoints) {
+        const routesFromHere = findRoutesFrom(start,adjacency);                                         // all routes that begin at THIS entry point
+        allRoutes.push(...routesFromHere);
+    }
+    return allRoutes;
+}
