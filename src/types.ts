@@ -8,7 +8,7 @@ export interface GraphNode {
     metadata?: Record<string, string>;
 }
 
-export type NodeKind = "service" | "rds" | "sqs";
+export type NodeKind = "service" | "rds" | "sqs" | "sql";
 
 export interface Vulnerability {
     file: string;

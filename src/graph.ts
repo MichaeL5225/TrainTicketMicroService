@@ -76,7 +76,7 @@ export function buildNodeIndex(nodes: GraphNode[]): Map<string, GraphNode> {    
     const result =  new Map<string, GraphNode>();                                                       // creates a new, empty Map: key = name (string), value = full node (GraphNode)
 
     for (const node of nodes) {
-        result.set(node.name, node);
+        result.set(node.name, node);                                                                     // adds an entry to the Map: key = the service name, value = the whole node object
     }
 
     return result;
