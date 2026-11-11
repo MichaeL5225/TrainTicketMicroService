@@ -1,0 +1,17 @@
+{
+  "name": "trainticketmicroservice",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Michael Yehoshua",
+  "license": "ISC",
+  "description": "REST API for querying a microservices graph",
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "typescript": "^7.0.2"
+  }
+}

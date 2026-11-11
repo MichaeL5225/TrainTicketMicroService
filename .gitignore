@@ -1,0 +1,5 @@
+# Dependencies - restored with "npm install"
+node_modules/
+
+# Build output - restored with "npx tsc"
+dist/
