@@ -1,4 +1,4 @@
-import type { GraphEdge } from "./types.js";
+import type { GraphEdge, GraphNode  } from "./types.js";
 
 
 
@@ -40,4 +40,23 @@ export function findRoutesFrom(start: string, adjacency: Map<string, string[]>):
 
     walk(start, [start]);                                                                     // starts the walk: we're at "start", and the path so far is just [start]
     return routes;
+}
+
+
+export function findEntryPoints(nodes: GraphNode[], edges: GraphEdge[]): string[] {           // returns the names of all services that nobody calls
+    const targets = new Set<string>();                                                        // creates an empty set of service names
+
+    for (const edge of edges) {
+        targets.add(edge.to);                                                                  // adds the target to the set (duplicates are ignored automatically)                                              
+    }
+
+    const entryPoints: string[] = [];
+
+    for (const node of nodes) {                                                                 // loops over all nodes      
+        if (!targets.has(node.name)) {                                                          // this service is NOT in targets = nobody calls it
+            entryPoints.push(node.name);                                                        // so it's an entry point - add its name to the result
+        }
+    }
+
+    return entryPoints;
 }
