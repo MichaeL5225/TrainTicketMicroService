@@ -71,3 +71,13 @@ export function findAllRoutes(entryPoints: string[], adjacency: Map<string, stri
     }
     return allRoutes;
 }
+
+export function buildNodeIndex(nodes: GraphNode[]): Map<string, GraphNode> {                            // returns a Map: service name → its full GraphNode object
+    const result =  new Map<string, GraphNode>();                                                       // creates a new, empty Map: key = name (string), value = full node (GraphNode)
+
+    for (const node of nodes) {
+        result.set(node.name, node);
+    }
+
+    return result;
+}
