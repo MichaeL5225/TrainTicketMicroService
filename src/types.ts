@@ -23,14 +23,14 @@ export interface VulnerabilityMetadata {
 
 export interface RawGraphEdge {
     from: string;
-    to: EdgeTarget;
+    to: EdgeTarget;       // string OR string[] - exactly what the file contains, including the messy case
 }
 
 export type EdgeTarget = string | string[];
 
 export interface GraphEdge {
     from: string;
-    to: string;
+    to: string;           // ONE target - one arrow
 }
 
 export interface RawGraphFile {
