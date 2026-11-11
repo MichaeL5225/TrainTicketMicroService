@@ -3,3 +3,6 @@ node_modules/
 
 # Build output - restored with "npx tsc"
 dist/
+
+# Internal notes - not part of the submission
+notes/
