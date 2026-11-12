@@ -1,5 +1,5 @@
 import { loadRawGraph, normalizeEdges } from "./loader.js";                               // functions that read and clean the data
-import { buildAdjacency, findEntryPoints, findAllRoutes, buildNodeIndex } from "./graph.js";   // functions that work on the graph
+import { buildAdjacency, findEntryPoints, findAllRoutes, buildNodeIndex, routesToGraph } from "./graph.js";   // functions that work on the graph
 import { applyFilters } from "./filters.js";                                              // the generic filtering function
 
 const graph = loadRawGraph("data/graph.json");                                            // 1. read the file
@@ -8,6 +8,8 @@ const adjacency = buildAdjacency(edges);                                        
 const entryPoints = findEntryPoints(graph.nodes, edges);                                  // 4. find services that nobody calls
 const allRoutes = findAllRoutes(entryPoints, adjacency);                                  // 5. find every full route from every entry point
 const nodesByName = buildNodeIndex(graph.nodes);                                          // 6. build the Map: name → full node
+const fullGraph = routesToGraph(applyFilters(allRoutes, [], nodesByName), nodesByName);          // the whole graph (no filters)
+const sinkGraph = routesToGraph(applyFilters(allRoutes, ["sink"], nodesByName), nodesByName);    // only routes that end in a sink
 
 
 console.log("nodes:", graph.nodes.length, "| edges:", edges.length);                      // quick sanity check: 46 | 98
@@ -19,3 +21,6 @@ console.log("vulnerable:", applyFilters(allRoutes, ["vulnerable"], nodesByName).
 console.log("sink + vulnerable:", applyFilters(allRoutes, ["sink", "vulnerable"], nodesByName).length);  // expected: 30
 console.log("public + sink:", applyFilters(allRoutes, ["public", "sink"], nodesByName).length);          // expected: 0
 console.log("no filters:", applyFilters(allRoutes, [], nodesByName).length);                             // expected: 222
+
+console.log("full graph:", fullGraph.nodes.length, "nodes,", fullGraph.edges.length, "edges");  // expected: 47 nodes, 98 edges
+console.log("sink graph:", sinkGraph.nodes.length, "nodes,", sinkGraph.edges.length, "edges");  // expected: 21 nodes, 40 edges

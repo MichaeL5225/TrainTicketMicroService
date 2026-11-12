@@ -8,7 +8,7 @@ export interface GraphNode {
     metadata?: Record<string, string>;
 }
 
-export type NodeKind = "service" | "rds" | "sqs" | "sql";
+export type NodeKind = "service" | "rds" | "sqs" | "sql" | "unknown";   // "unknown" = a service that edges point to, but has no info in the file
 
 export interface Vulnerability {
     file: string;
@@ -39,3 +39,8 @@ export interface RawGraphFile {
 }
 
 export type RouteFilter = (route: string[], nodesByName: Map<string, GraphNode>) => boolean; // any function that gets a route + the node map, and returns true/false
+
+export interface GraphResponse {                                                              // what the API returns: a graph that a client can draw
+    nodes: GraphNode[];                                                                       // every service that appears in the routes - each one once
+    edges: GraphEdge[];                                                                       // every arrow that appears in the routes - each one once
+}
