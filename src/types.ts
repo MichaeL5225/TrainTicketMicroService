@@ -37,3 +37,5 @@ export interface RawGraphFile {
     nodes: GraphNode[];
     edges: RawGraphEdge[];
 }
+
+export type RouteFilter = (route: string[], nodesByName: Map<string, GraphNode>) => boolean; // any function that gets a route + the node map, and returns true/false

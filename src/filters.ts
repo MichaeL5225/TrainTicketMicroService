@@ -1,4 +1,4 @@
-import type { GraphNode, NodeKind } from "./types.js";
+import type { GraphNode, NodeKind, RouteFilter } from "./types.js";
 
 const SINK_KINDS = new Set<NodeKind>(["rds", "sql"]);                                        // the node kinds that count as a sink - change the decision HERE only
 
@@ -49,3 +49,36 @@ export function hasVulnerability(route: string[], nodesByName: Map<string, Graph
 
     return false;
 }
+
+function passesAllFilters(route: string[], routeFilters: RouteFilter[], nodesByName: Map<string, GraphNode>) : boolean { // true only if the route passes EVERY filter in the list
+    for (const routeFilter of routeFilters) {                                                                                 // loops over the filter functions, one at a time
+        if (routeFilter(route, nodesByName) === false) {                                                                 // runs the filter on this route - did it fail? 
+            return false;                                                                                           // one failed filter is enough to reject the route - stop checking
+        }
+    }
+
+    return true;                                                                                                     // no filter failed - the route passes them all
+}
+
+export function applyFilters(routes: string[][], filterNames: string[], nodesByName: Map<string, GraphNode>) : string[][] {  // keeps only the routes that pass all the named filters
+    const selectedFilters: RouteFilter[] = [];                                                                                      // an empty array that will hold filter FUNCTIONS
+    
+    for (const name of filterNames) {                                                                                            // loops over the names that came from the URL (e.g. "sink", "vulnerable")                                                                                      
+        const routeFilter = FILTERS[name];                                                                                       // looks up the function by its name (RouteFilter or undefined)
+        
+        if (routeFilter === undefined) {
+            throw new Error (`Unknown filter: ${name}`);                                                                         // stops everything and reports which name was wrong
+        }
+        
+        selectedFilters.push(routeFilter);                                                                                       // the name exists - add its function to the array
+    }
+
+    return routes.filter(route => passesAllFilters(route, selectedFilters, nodesByName));                                        // keeps only the routes that pass every filter
+}
+
+
+export const FILTERS: Record<string, RouteFilter> = {                                              // the list of all available filters: name in the URL → filter function
+    sink: endsInSink,                                                                              // ?filters=sink        → routes that end in a database
+    public: startsInPublic,                                                                        // ?filters=public      → routes that start at a public service
+    vulnerable: hasVulnerability,                                                                  // ?filters=vulnerable  → routes that pass through a vulnerable service
+};
