@@ -1,6 +1,6 @@
 import { loadRawGraph, normalizeEdges } from "./loader.js";                               // functions that read and clean the data
 import { buildAdjacency, findEntryPoints, findAllRoutes, buildNodeIndex } from "./graph.js";   // functions that work on the graph
-import { endsInSink, startsInPublic } from "./filters.js"; 
+import { endsInSink, startsInPublic, hasVulnerability } from "./filters.js"; 
 
 const graph = loadRawGraph("data/graph.json");                                            // 1. read the file
 const edges = normalizeEdges(graph.edges);                                                // 2. split edges into one-target pairs
@@ -10,6 +10,7 @@ const allRoutes = findAllRoutes(entryPoints, adjacency);                        
 const nodesByName = buildNodeIndex(graph.nodes);                                          // 6. build the Map: name → full node
 const sinkRoutes = allRoutes.filter(route => endsInSink(route, nodesByName));            // keeps only routes whose last service is a sink
 const publicRoutes = allRoutes.filter(route => startsInPublic(route, nodesByName));       // keeps only routes that start at a public service
+const vulnerableRoutes = allRoutes.filter(route => hasVulnerability(route, nodesByName)); // keeps only routes that pass through a vulnerable service
 
 console.log("nodes:", graph.nodes.length, "| edges:", edges.length);                      // quick sanity check: 46 | 98
 console.log("entry points:", entryPoints.length, "| routes:", allRoutes.length);          // quick sanity check: 18 | 222
@@ -19,3 +20,5 @@ console.log("routes ending in a sink:", sinkRoutes.length);                     
 console.log(sinkRoutes[0]);                                                               // one example route
 
 console.log("routes starting at a public service:", publicRoutes.length);                // expected: 6
+
+console.log("routes with a vulnerability:", vulnerableRoutes.length);                    // expected: 60

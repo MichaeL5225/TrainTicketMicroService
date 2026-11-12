@@ -33,3 +33,19 @@ export function startsInPublic(route: string[], nodesByName: Map<string, GraphNo
 
     return firstNode.publicExposed === true;
 }
+
+export function hasVulnerability(route: string[], nodesByName: Map<string, GraphNode>) : boolean { //true if the services in the route has vulnerabilities
+    
+    for (const service of route) {                                                                 // loops over every service name in the route
+        const node = nodesByName.get(service);
+        if (node === undefined) {                                                                  // no info about this service
+            continue;                                                                              // skip it, check the next service in the route
+        }
+
+        if (node.vulnerabilities !== undefined && node.vulnerabilities.length > 0) {               //the field exists AND has at least one item
+            return true;
+        }
+    }
+
+    return false;
+}
