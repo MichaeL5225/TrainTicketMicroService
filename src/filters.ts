@@ -60,6 +60,8 @@ function passesAllFilters(route: string[], routeFilters: RouteFilter[], nodesByN
     return true;                                                                                                     // no filter failed - the route passes them all
 }
 
+export class UnknownFilterError extends Error{}                                                                              // our own error type, meaning "the user asked for a filter that doesn't exist"
+
 export function applyFilters(routes: string[][], filterNames: string[], nodesByName: Map<string, GraphNode>) : string[][] {  // keeps only the routes that pass all the named filters
     const selectedFilters: RouteFilter[] = [];                                                                                      // an empty array that will hold filter FUNCTIONS
     
@@ -67,7 +69,7 @@ export function applyFilters(routes: string[][], filterNames: string[], nodesByN
         const routeFilter = FILTERS[name];                                                                                       // looks up the function by its name (RouteFilter or undefined)
         
         if (routeFilter === undefined) {
-            throw new Error (`Unknown filter: ${name}`);                                                                         // stops everything and reports which name was wrong
+            throw new UnknownFilterError (`Unknown filter: ${name}`);                                                                         // stops everything and reports which name was wrong
         }
         
         selectedFilters.push(routeFilter);                                                                                       // the name exists - add its function to the array

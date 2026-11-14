@@ -1,7 +1,7 @@
 import express from "express";                                                                                  // the server library
 import { loadRawGraph, normalizeEdges } from "./loader.js";                                                     // reading and cleaning the data
 import { buildAdjacency, findEntryPoints, findAllRoutes, buildNodeIndex, routesToGraph } from "./graph.js";     // graph logic
-import { applyFilters } from "./filters.js";                                                                    // the generic filtering
+import { applyFilters, FILTERS, UnknownFilterError  } from "./filters.js";                                      // filtering, the filter list, and our error type
 
 // ---- runs ONCE, when the server starts (steps 1-6) ----
 const graph = loadRawGraph("data/graph.json");                                            // 1. read the file
@@ -20,9 +20,21 @@ app.get("/graph", (req, res) => {                                               
     const filterNames = typeof rawFilters === "string"                                    // did we get one plain text value?
     ? rawFilters.split(",")                                                               // yes → split it by commas: "sink,vulnerable" → ["sink", "vulnerable"]
     : [];                                                                                 // no → no filters
-    const filtered = applyFilters(allRoutes, filterNames, nodesByName);                   // the filters from the URL
-    const response = routesToGraph(filtered, nodesByName);                                // turns the routes into { nodes, edges }
-    res.json(response);                                                                   // sends it back to the caller as JSON
+    try {
+        const filtered = applyFilters(allRoutes, filterNames, nodesByName);                   // the filters from the URL
+        const response = routesToGraph(filtered, nodesByName);                                // turns the routes into { nodes, edges }
+        res.json(response);                                                                   // sends it back to the caller as JSON
+    } catch (error) {                                                                         // "...and if something was thrown, come here"
+        if (error instanceof UnknownFilterError) {                                            // is it OUR error - a wrong filter name?
+            res.status(400).json({                                                            // reply with 400 = "your request is wrong"
+                error: error.message,                                                         // e.g. "Unknown filter: xyz"
+                availableFilters: Object.keys(FILTERS),                                       // the names that DO exist: ["sink", "public", "vulnerable"]
+            });
+            return;
+        }
+        throw error;                                                                          // any other error is a real bug - let Express handle it as 500
+    }
+    
 });
 
 
