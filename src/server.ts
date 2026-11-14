@@ -19,6 +19,8 @@ app.get("/graph", (req, res) => {                                               
     const rawFilters = req.query.filters;                                                 // the text after "?filters=" in the URL (or undefined if it's not there)
     const filterNames = typeof rawFilters === "string"                                    // did we get one plain text value?
     ? rawFilters.split(",")                                                               // yes → split it by commas: "sink,vulnerable" → ["sink", "vulnerable"]
+    .map(name => name.trim())                                                             // remove spaces around each name → ["sink", "vulnerable", ""]
+    .filter(name => name !== "")                                                          // drop empty names → ["sink", "vulnerable"]
     : [];                                                                                 // no → no filters
     try {
         const filtered = applyFilters(allRoutes, filterNames, nodesByName);                   // the filters from the URL
