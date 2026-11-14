@@ -1,5 +1,7 @@
 import { loadRawGraph, normalizeEdges } from "./loader.js";                               // functions that read and clean the data
-import { buildAdjacency, findEntryPoints, findAllRoutes, buildNodeIndex, routesToGraph } from "./graph.js";   // functions that work on the graph
+import { buildAdjacency, findEntryPoints, buildNodeIndex } from "./graph/build.js";
+import { findAllRoutes } from "./graph/routes.js";
+import { routesToGraph } from "./graph/response.js";
 import { applyFilters } from "./filters.js";                                              // the generic filtering function
 
 const graph = loadRawGraph("data/graph.json");                                            // 1. read the file

@@ -1,6 +1,8 @@
 import express from "express";                                                                                  // the server library
 import { loadRawGraph, normalizeEdges } from "./loader.js";                                                     // reading and cleaning the data
-import { buildAdjacency, findEntryPoints, findAllRoutes, buildNodeIndex, routesToGraph } from "./graph.js";     // graph logic
+import { buildAdjacency, findEntryPoints, buildNodeIndex } from "./graph/build.js";
+import { findAllRoutes } from "./graph/routes.js";
+import { routesToGraph } from "./graph/response.js";
 import { applyFilters, FILTERS, UnknownFilterError  } from "./filters.js";                                      // filtering, the filter list, and our error type
 
 // ---- runs ONCE, when the server starts (steps 1-6) ----
