@@ -2,6 +2,7 @@ import express from "express";                                                  
 import { UnknownFilterError } from "./errors/UnknownFilterError.js";
 import { GraphService } from "./services/graphService.js";                                                      // the graph logic
 import { parseFilterNames } from "./validators/filtersValidator.js";                                            // reads and checks the filters from the URL
+import { createGraphController } from "./controllers/graphController.js"; // builds the request handlers
 
 
 // ---- runs ONCE, when the server starts (steps 1-6) ----
@@ -11,22 +12,10 @@ const app = express();                                                          
 const PORT = 3000;                                                                        // the "door number" the server listens on
 
 // ---- runs on EVERY request to /graph (steps 7-8) ----
-app.get("/graph", (req, res) => {                                                         // "when someone opens /graph, run this function"
-    try {
-        const filterNames = parseFilterNames(req.query.filters, graphService.getAvailableFilters());    // clean + check the names from the URL
-        res.json(graphService.getGraph(filterNames));                                                   // the service filters and builds the answer
-    } catch (error) {                                                                                   // "...and if something was thrown, come here"
-        if (error instanceof UnknownFilterError) {                                                      // is it OUR error - a wrong filter name?
-            res.status(400).json({                                                                      // reply with 400 = "your request is wrong"
-                error: error.message,                                                                   // e.g. "Unknown filter: xyz"
-                availableFilters: graphService.getAvailableFilters(),                                   // the service knows the filter names
-            });
-            return;
-        }
-        throw error;                                                                                    // any other error is a real bug - let Express handle it as 500
-    }
-    
-});
+const graphController = createGraphController(graphService);              // the controller gets the service it should use
+
+app.get("/graph", graphController.getGraph);                              // GET /graph → the controller's getGraph
+app.get("/filters", graphController.getFilters);                          // GET /filters → the controller's getFilters
 
 
 app.listen(PORT, () => {                                                                  // starts the server and waits for requests
