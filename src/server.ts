@@ -16,7 +16,11 @@ const PORT = 3000;                                                              
 
 // ---- runs on EVERY request to /graph (steps 7-8) ----
 app.get("/graph", (req, res) => {                                                         // "when someone opens /graph, run this function"
-    const filtered = applyFilters(allRoutes, [], nodesByName);                            // no filters yet - keeps all routes
+    const rawFilters = req.query.filters;                                                 // the text after "?filters=" in the URL (or undefined if it's not there)
+    const filterNames = typeof rawFilters === "string"                                    // did we get one plain text value?
+    ? rawFilters.split(",")                                                               // yes → split it by commas: "sink,vulnerable" → ["sink", "vulnerable"]
+    : [];                                                                                 // no → no filters
+    const filtered = applyFilters(allRoutes, filterNames, nodesByName);                   // the filters from the URL
     const response = routesToGraph(filtered, nodesByName);                                // turns the routes into { nodes, edges }
     res.json(response);                                                                   // sends it back to the caller as JSON
 });
