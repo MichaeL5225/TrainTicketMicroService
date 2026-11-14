@@ -1,20 +1,11 @@
-import express from "express";                                                                                  // the server library
-import { UnknownFilterError } from "./errors/UnknownFilterError.js";
-import { GraphService } from "./services/graphService.js";                                                      // the graph logic
-import { parseFilterNames } from "./validators/filtersValidator.js";                                            // reads and checks the filters from the URL
-import { createGraphController } from "./controllers/graphController.js"; // builds the request handlers
-import { createGraphRouter } from "./routes/graphRoutes.js";              // all the graph routes
+import { config } from "./config.js";                                     // port + data file path
+import { GraphService } from "./services/graphService.js";                // the graph logic
+import { createApp } from "./app.js";                                     // builds the Express app
 
 
-// ---- runs ONCE, when the server starts (steps 1-6) ----
-const graphService = new GraphService("data/graph.json");                 // the constructor runs steps 1-6 right here
+const graphService = new GraphService(config.dataFilePath);               // computes everything ONCE
+const app = createApp(graphService);                                      // builds the app around the service
 
-const app = express();                                                                    // creates the server application
-const PORT = 3000;                                                                        // the "door number" the server listens on
-
-// ---- runs on EVERY request to /graph (steps 7-8) ----
-app.use(createGraphRouter(graphService));                                 // plugs all the graph routes into the app
-
-app.listen(PORT, () => {                                                                  // starts the server and waits for requests
-    console.log(`Server running at http://localhost:${PORT}/graph`);                      // prints once it's ready
+app.listen(config.port, () => {                                           // starts listening - the ONLY thing this file really does
+    console.log(`Server running at http://localhost:${config.port}/graph`); // prints once it's ready
 });
