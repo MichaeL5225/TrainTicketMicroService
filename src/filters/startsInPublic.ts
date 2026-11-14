@@ -1,4 +1,4 @@
-import type { GraphNode } from "../types.js";
+import type { GraphNode } from "../types/graph.js";
 
 
 export function startsInPublic(route: string[], nodesByName: Map<string, GraphNode>): boolean {
@@ -8,7 +8,7 @@ export function startsInPublic(route: string[], nodesByName: Map<string, GraphNo
         return false;
     }
 
-    const firstNode = nodesByName.get(firstName); //gets the full object of that sertvice
+    const firstNode = nodesByName.get(firstName); //gets the full object of that service
 
     if (firstNode === undefined) { // no info about this service
         return false;

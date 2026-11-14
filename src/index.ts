@@ -1,4 +1,5 @@
-import { loadRawGraph, normalizeEdges } from "./loader.js";                               // functions that read and clean the data
+import { normalizeEdges } from "./graph/normalize.js";
+import { loadRawGraph } from "./data/loader.js";
 import { buildAdjacency, findEntryPoints, buildNodeIndex } from "./graph/build.js";
 import { findAllRoutes } from "./graph/routes.js";
 import { routesToGraph } from "./graph/response.js";

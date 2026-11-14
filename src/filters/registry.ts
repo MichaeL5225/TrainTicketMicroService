@@ -1,7 +1,7 @@
 import { endsInSink } from "./endsInSink.js";
 import { hasVulnerability } from "./hasVulnerability.js";
 import { startsInPublic } from "./startsInPublic.js";
-import type { RouteFilter } from "../types.js";
+import type { RouteFilter } from "../types/filters.js";
 
 
 

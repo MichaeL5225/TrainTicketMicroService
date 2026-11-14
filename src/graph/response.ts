@@ -1,4 +1,5 @@
-import type { GraphNode, GraphResponse, GraphEdge } from "../types.js";
+import type { GraphResponse } from "../types/api.js";
+import type { GraphNode, GraphEdge } from "../types/graph.js";
 
 
 export function routesToGraph(routes: string[][], nodesByName: Map<string, GraphNode>): GraphResponse {

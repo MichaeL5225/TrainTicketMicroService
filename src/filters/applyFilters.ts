@@ -1,6 +1,7 @@
 import { UnknownFilterError } from "../errors/UnknownFilterError.js";
 import { FILTERS } from "./registry.js";
-import type { RouteFilter, GraphNode } from "../types.js";
+import type { RouteFilter } from "../types/filters.js";
+import type { GraphNode } from "../types/graph.js";
 
 function passesAllFilters(route: string[], routeFilters: RouteFilter[], nodesByName: Map<string, GraphNode>): boolean {
     for (const routeFilter of routeFilters) { // loops over the filter functions, one at a time

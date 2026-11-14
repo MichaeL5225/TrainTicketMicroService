@@ -1,4 +1,4 @@
-import type { NodeKind, GraphNode } from "../types.js";
+import type { NodeKind, GraphNode } from "../types/graph.js";
 
 const SINK_KINDS = new Set<NodeKind>(["rds", "sql"]); // the node kinds that count as a sink - change the decision HERE only
 

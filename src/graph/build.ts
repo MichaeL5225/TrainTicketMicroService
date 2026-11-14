@@ -1,4 +1,4 @@
-import type { GraphEdge, GraphNode } from "../types.js";
+import type { GraphEdge, GraphNode } from "../types/graph.js";
 
 
 export function buildAdjacency(edges: GraphEdge[]): Map<string, string[]> {
