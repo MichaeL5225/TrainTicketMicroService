@@ -1,20 +1,10 @@
 import express from "express";                                                                                  // the server library
-import { normalizeEdges } from "./graph/normalize.js";
-import { loadRawGraph } from "./data/loader.js";
-import { buildAdjacency, findEntryPoints, buildNodeIndex } from "./graph/build.js";
-import { findAllRoutes } from "./graph/routes.js";
-import { routesToGraph } from "./graph/response.js";
-import { applyFilters } from "./filters/applyFilters.js";
 import { UnknownFilterError } from "./errors/UnknownFilterError.js";
-import { FILTERS } from "./filters/registry.js";
+import { GraphService } from "./services/graphService.js";                                                      // the graph logic
+
 
 // ---- runs ONCE, when the server starts (steps 1-6) ----
-const graph = loadRawGraph("data/graph.json");                                            // 1. read the file
-const edges = normalizeEdges(graph.edges);                                                // 2. split edges into one-target pairs
-const adjacency = buildAdjacency(edges);                                                  // 3. build the Map: service → its targets
-const entryPoints = findEntryPoints(graph.nodes, edges);                                  // 4. find services that nobody calls
-const allRoutes = findAllRoutes(entryPoints, adjacency);                                  // 5. find every full route from every entry point
-const nodesByName = buildNodeIndex(graph.nodes);                                          // 6. build the Map: name → full node
+const graphService = new GraphService("data/graph.json");                 // the constructor runs steps 1-6 right here
 
 const app = express();                                                                    // creates the server application
 const PORT = 3000;                                                                        // the "door number" the server listens on
@@ -28,14 +18,12 @@ app.get("/graph", (req, res) => {                                               
     .filter(name => name !== "")                                                          // drop empty names → ["sink", "vulnerable"]
     : [];                                                                                 // no → no filters
     try {
-        const filtered = applyFilters(allRoutes, filterNames, nodesByName);                   // the filters from the URL
-        const response = routesToGraph(filtered, nodesByName);                                // turns the routes into { nodes, edges }
-        res.json(response);                                                                   // sends it back to the caller as JSON
+        res.json(graphService.getGraph(filterNames));                                         // the service filters and builds the answer
     } catch (error) {                                                                         // "...and if something was thrown, come here"
         if (error instanceof UnknownFilterError) {                                            // is it OUR error - a wrong filter name?
             res.status(400).json({                                                            // reply with 400 = "your request is wrong"
                 error: error.message,                                                         // e.g. "Unknown filter: xyz"
-                availableFilters: [...FILTERS.keys()],                                        // the registered names: ["sink", "public", "vulnerable"]
+                availableFilters: graphService.getAvailableFilters(),                         // the service knows the filter names
             });
             return;
         }
