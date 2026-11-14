@@ -66,8 +66,7 @@ export function applyFilters(routes: string[][], filterNames: string[], nodesByN
     const selectedFilters: RouteFilter[] = [];                                                                                      // an empty array that will hold filter FUNCTIONS
     
     for (const name of filterNames) {                                                                                            // loops over the names that came from the URL (e.g. "sink", "vulnerable")                                                                                      
-        const routeFilter = FILTERS[name];                                                                                       // looks up the function by its name (RouteFilter or undefined)
-        
+        const routeFilter = FILTERS.get(name);                                                                                   // looks up the function by its name - only names we registered (RouteFilter or undefined)
         if (routeFilter === undefined) {
             throw new UnknownFilterError (`Unknown filter: ${name}`);                                                                         // stops everything and reports which name was wrong
         }
@@ -79,8 +78,8 @@ export function applyFilters(routes: string[][], filterNames: string[], nodesByN
 }
 
 
-export const FILTERS: Record<string, RouteFilter> = {                                              // the list of all available filters: name in the URL → filter function
-    sink: endsInSink,                                                                              // ?filters=sink        → routes that end in a database
-    public: startsInPublic,                                                                        // ?filters=public      → routes that start at a public service
-    vulnerable: hasVulnerability,                                                                  // ?filters=vulnerable  → routes that pass through a vulnerable service
-};
+export const FILTERS = new Map<string, RouteFilter>([      // the list of all available filters: name in the URL → filter function
+    ["sink", endsInSink],                                  // ?filters=sink        → routes that end in a database
+    ["public", startsInPublic],                            // ?filters=public      → routes that start at a public service
+    ["vulnerable", hasVulnerability],                      // ?filters=vulnerable  → routes that pass through a vulnerable service
+]);

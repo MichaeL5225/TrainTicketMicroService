@@ -124,5 +124,5 @@ export function routesToGraph(routes: string[][], nodesByName: Map<string, Graph
         }
     }
 
-    return {nodes: nodes, edges: edges};                                                                  // the final answer: unique nodes + unique arrows
+    return {routes: routes, nodes: nodes, edges: edges};                                                  // the routes themselves + the graph built from them
 }

@@ -41,6 +41,7 @@ export interface RawGraphFile {
 export type RouteFilter = (route: string[], nodesByName: Map<string, GraphNode>) => boolean; // any function that gets a route + the node map, and returns true/false
 
 export interface GraphResponse {                                                              // what the API returns: a graph that a client can draw
+    routes: string[][];                                                                       // the routes that passed the filters - each one is a list of service names, in order
     nodes: GraphNode[];                                                                       // every service that appears in the routes - each one once
     edges: GraphEdge[];                                                                       // every arrow that appears in the routes - each one once
 }

@@ -28,7 +28,7 @@ app.get("/graph", (req, res) => {                                               
         if (error instanceof UnknownFilterError) {                                            // is it OUR error - a wrong filter name?
             res.status(400).json({                                                            // reply with 400 = "your request is wrong"
                 error: error.message,                                                         // e.g. "Unknown filter: xyz"
-                availableFilters: Object.keys(FILTERS),                                       // the names that DO exist: ["sink", "public", "vulnerable"]
+                availableFilters: [...FILTERS.keys()],                                        // the registered names: ["sink", "public", "vulnerable"]
             });
             return;
         }
