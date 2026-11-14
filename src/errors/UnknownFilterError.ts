@@ -1,0 +1,3 @@
+
+export class UnknownFilterError extends Error { } // our own error type, meaning "the user asked for a filter that doesn't exist"
+

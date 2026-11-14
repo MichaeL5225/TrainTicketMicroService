@@ -3,7 +3,9 @@ import { loadRawGraph, normalizeEdges } from "./loader.js";                     
 import { buildAdjacency, findEntryPoints, buildNodeIndex } from "./graph/build.js";
 import { findAllRoutes } from "./graph/routes.js";
 import { routesToGraph } from "./graph/response.js";
-import { applyFilters, FILTERS, UnknownFilterError  } from "./filters.js";                                      // filtering, the filter list, and our error type
+import { applyFilters } from "./filters/applyFilters.js";
+import { UnknownFilterError } from "./errors/UnknownFilterError.js";
+import { FILTERS } from "./filters/registry.js";
 
 // ---- runs ONCE, when the server starts (steps 1-6) ----
 const graph = loadRawGraph("data/graph.json");                                            // 1. read the file

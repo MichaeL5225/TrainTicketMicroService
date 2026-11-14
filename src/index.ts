@@ -2,7 +2,7 @@ import { loadRawGraph, normalizeEdges } from "./loader.js";                     
 import { buildAdjacency, findEntryPoints, buildNodeIndex } from "./graph/build.js";
 import { findAllRoutes } from "./graph/routes.js";
 import { routesToGraph } from "./graph/response.js";
-import { applyFilters } from "./filters.js";                                              // the generic filtering function
+import { applyFilters } from "./filters/applyFilters.js";
 
 const graph = loadRawGraph("data/graph.json");                                            // 1. read the file
 const edges = normalizeEdges(graph.edges);                                                // 2. split edges into one-target pairs
