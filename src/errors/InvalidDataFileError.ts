@@ -1,0 +1,1 @@
+export class InvalidDataFileError extends Error { }                       // "the data file is missing something or has the wrong shape"
